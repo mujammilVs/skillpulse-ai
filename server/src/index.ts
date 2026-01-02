@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db";
 import authRoutes from "./routes/auth.routes";
+import analysisRoutes from "./routes/analysis.routes";
+import skillRoutes from "./routes/skill.routes";
 
 dotenv.config();
 
@@ -12,6 +14,8 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 app.use("/auth", authRoutes);
+app.use("/analysis", analysisRoutes);
+app.use("/skills", skillRoutes);
 
 app.get("/", (_, res) => {
   res.send("SkillPulse AI Backend Running");

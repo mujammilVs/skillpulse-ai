@@ -1,22 +1,42 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function Dashboard() {
-  const navigate = useNavigate();
+  const [skills, setSkills] = useState<any[]>([]);
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
+  const buildSkills = async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:5000/skills/build", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setSkills(data.skills || []);
+  };
 
-    if (!token) {
-      navigate("/");
-      return;
-    }
+  const loadSkills = async () => {
+    const token = localStorage.getItem("token");
+    const res = await fetch("http://localhost:5000/skills", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    setSkills(data.skills || []);
+  };
 
-    localStorage.setItem("token", token);
-  }, [navigate]);
+  return (
+    <div>
+      <h2>Skills (Rule-Based)</h2>
+      <button onClick={buildSkills}>Build Skill Profile</button>
+      <button onClick={loadSkills}>Load Skills</button>
 
-  return <h2>Login successful 🎉</h2>;
+      <ul>
+        {skills.map((s) => (
+          <li key={s.name}>
+            {s.name} — {s.level}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default Dashboard;
