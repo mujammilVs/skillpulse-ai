@@ -1,40 +1,49 @@
 import { useState } from "react";
 
 function Dashboard() {
-  const [skills, setSkills] = useState<any[]>([]);
+  const [result, setResult] = useState<any>(null);
 
-  const buildSkills = async () => {
+  const checkReadiness = async () => {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/skills/build", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    setSkills(data.skills || []);
-  };
+    const res = await fetch(
+      "http://localhost:5000/jobs/frontend",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-  const loadSkills = async () => {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/skills", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
     const data = await res.json();
-    setSkills(data.skills || []);
+    setResult(data);
   };
 
   return (
     <div>
-      <h2>Skills (Rule-Based)</h2>
-      <button onClick={buildSkills}>Build Skill Profile</button>
-      <button onClick={loadSkills}>Load Skills</button>
+      <h2>Job Readiness</h2>
+      <button onClick={checkReadiness}>
+        Check Frontend Readiness
+      </button>
 
-      <ul>
-        {skills.map((s) => (
-          <li key={s.name}>
-            {s.name} — {s.level}
-          </li>
-        ))}
-      </ul>
+      {result && (
+        <div>
+          <p>
+            <strong>{result.role}</strong> — {result.score}%
+          </p>
+
+          <p>Matched Skills:</p>
+          <ul>
+            {result.matchedSkills.map((s: string) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+
+          <p>Missing Skills:</p>
+          <ul>
+            {result.missingSkills.map((s: string) => (
+              <li key={s}>{s}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

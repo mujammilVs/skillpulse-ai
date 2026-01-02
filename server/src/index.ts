@@ -5,6 +5,7 @@ import connectDB from "./config/db";
 import authRoutes from "./routes/auth.routes";
 import analysisRoutes from "./routes/analysis.routes";
 import skillRoutes from "./routes/skill.routes";
+import jobRoutes from "./routes/job.routes";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/analysis", analysisRoutes);
 app.use("/skills", skillRoutes);
+app.use("/jobs", jobRoutes);
 
 app.get("/", (_, res) => {
   res.send("SkillPulse AI Backend Running");
